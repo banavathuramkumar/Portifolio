@@ -13,7 +13,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/projects");
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/projects`);
         setProjectData(response.data);
       } catch (error) {
         console.warn("Could not fetch projects from API, using fallback data");

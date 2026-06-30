@@ -1,15 +1,78 @@
 import { motion } from "framer-motion";
-import { Briefcase, GraduationCap, Calendar } from "lucide-react";
+import { Briefcase, GraduationCap, Calendar, AlertTriangle } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
-import { experience } from "../../data/experience";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Experience = () => {
+  const [experience, setExperience] = useState([]);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchExperienceAndProfile = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const [expRes, profileRes] = await Promise.all([
+        axios.get(`${apiUrl}/api/experience`),
+        axios.get(`${apiUrl}/api/profile`)
+      ]);
+      setExperience(expRes.data);
+      setProfile(profileRes.data);
+    } catch (error) {
+      console.error("Failed to fetch experience/profile", error);
+      setError("Failed to load experience timeline.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchExperienceAndProfile();
+  }, []);
+
+  if (loading) {
+    return (
+      <section id="experience" className="py-24 relative bg-dark-800/50">
+        <div className="container mx-auto px-6 md:px-12 flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section id="experience" className="py-24 relative bg-dark-800/50">
+        <div className="container mx-auto px-6 md:px-12 text-center">
+          <AlertTriangle className="mx-auto text-yellow-500 mb-4 animate-bounce" size={48} />
+          <p className="text-slate-400 text-lg mb-4">{error}</p>
+          <button onClick={fetchExperienceAndProfile} className="glass px-6 py-2.5 rounded-xl text-primary border border-primary/20 hover:bg-primary/10 transition-colors text-sm font-semibold">
+            Retry Connection
+          </button>
+        </div>
+      </section>
+    );
+  }
+
+  if (experience.length === 0) {
+    return (
+      <section id="experience" className="py-24 relative bg-dark-800/50">
+        <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
+          No experience details added yet.
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="experience" className="py-24 relative bg-dark-800/50">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
-          title="Experience & Education" 
-          subtitle="My professional journey and academic background."
+          title={profile?.experienceTitle || "Experience & Education"} 
+          subtitle={profile?.experienceSubtitle || "My professional journey and academic background."}
           align="center"
         />
 
@@ -22,7 +85,7 @@ const Experience = () => {
             const Icon = item.type === "work" ? Briefcase : GraduationCap;
             
             return (
-              <div key={item.id} className={`relative flex flex-col md:flex-row mb-16 ${isEven ? 'md:flex-row-reverse' : ''}`}>
+              <div key={item._id || item.id || index} className={`relative flex flex-col md:flex-row mb-16 ${isEven ? 'md:flex-row-reverse' : ''}`}>
                 
                 {/* Timeline dot */}
                 <motion.div 

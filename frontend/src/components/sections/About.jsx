@@ -2,21 +2,57 @@ import { motion } from "framer-motion";
 import { Code, Users, Briefcase } from "lucide-react";
 import SectionHeading from "../ui/SectionHeading";
 import GlassCard from "../ui/GlassCard";
-import { profile } from "../../data/profile";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const resolveUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http") || path.startsWith("data:")) return path;
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  return `${apiUrl}${path}`;
+};
 
 const About = () => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const { data } = await axios.get(`${apiUrl}/api/profile`);
+        setProfile(data);
+      } catch (error) {
+        console.warn("Failed to fetch profile", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  if (loading || !profile) {
+    return (
+      <section id="about" className="py-24 relative bg-dark-900 animate-pulse">
+        <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
+          Loading profile...
+        </div>
+      </section>
+    );
+  }
+
   const stats = [
-    { icon: Briefcase, label: "Experience", value: profile.stats.experience },
-    { icon: Code, label: "Projects", value: profile.stats.projects },
-    { icon: Users, label: "Happy Clients", value: profile.stats.clients },
+    { icon: Briefcase, label: "Experience", value: profile.stats?.experience || "N/A" },
+    { icon: Code, label: "Projects", value: profile.stats?.projects || "N/A" },
+    { icon: Users, label: "Happy Clients", value: profile.stats?.clients || "N/A" },
   ];
 
   return (
     <section id="about" className="py-24 relative">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
-          title="About Me" 
-          subtitle="Get to know me and my background in software development."
+          title={profile.aboutTitle || "About Me"} 
+          subtitle={profile.aboutSubtitle || "Get to know me and my background in software development."}
         />
 
         <div className="grid lg:grid-cols-12 gap-12 items-center">
@@ -32,7 +68,7 @@ const About = () => {
               <div className="w-full h-full rounded-xl overflow-hidden relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-dark-900 via-transparent to-transparent z-10" />
                 <img 
-                  src={profile.image} 
+                  src={resolveUrl(profile.image)} 
                   alt={profile.name} 
                   className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500 hover:scale-105"
                   onError={(e) => {
@@ -55,8 +91,8 @@ const About = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h3 className="text-2xl font-bold mb-4 text-white">
-              Designing with passion, building with <span className="text-primary">purpose</span>.
+            <h3 className="text-2xl font-bold mb-4 text-white leading-snug">
+              {profile.aboutHeading || "Designing with passion, building with purpose."}
             </h3>
             
             <p className="text-slate-400 leading-relaxed mb-8 text-lg">

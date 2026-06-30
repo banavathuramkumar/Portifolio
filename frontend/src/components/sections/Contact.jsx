@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Send, MapPin, Phone, Mail, CheckCircle, XCircle } from "lucide-react";
 import axios from "axios";
 import SectionHeading from "../ui/SectionHeading";
 import Button from "../ui/Button";
-import { profile } from "../../data/profile";
 
 const Contact = () => {
+  const [profile, setProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState({ loading: false, success: false, error: null });
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const { data } = await axios.get(`${apiUrl}/api/profile`);
+        setProfile(data);
+      } catch (error) {
+        console.warn("Failed to fetch profile", error);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -19,7 +35,8 @@ const Contact = () => {
     setStatus({ loading: true, success: false, error: null });
 
     try {
-      await axios.post("http://localhost:5000/api/contact", formData);
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      await axios.post(`${apiUrl}/api/contact`, formData);
       setStatus({ loading: false, success: true, error: null });
       setFormData({ name: "", email: "", subject: "", message: "" });
       
@@ -37,6 +54,16 @@ const Contact = () => {
     }
   };
 
+  if (loadingProfile) {
+    return (
+      <section id="contact" className="py-24 relative">
+        <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
+          Loading contact information...
+        </div>
+      </section>
+    );
+  }
+
   const contactInfo = [
     { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}` },
     { icon: Phone, label: "Phone", value: profile.phone, href: `tel:${profile.phone}` },
@@ -47,8 +74,8 @@ const Contact = () => {
     <section id="contact" className="py-24 relative">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
-          title="Get in Touch" 
-          subtitle="Have a question or want to work together? Leave a message!"
+          title={profile.contactTitle || "Get in Touch"} 
+          subtitle={profile.contactSubtitle || "Have a question or want to work together? Leave a message!"}
         />
 
         <div className="grid lg:grid-cols-12 gap-12 mt-12">

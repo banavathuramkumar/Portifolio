@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const Button = ({ children, variant = "primary", className = "", href, ...props }) => {
+const Button = ({ children, variant = "primary", className = "", ...props }) => {
   const baseStyles = "relative inline-flex items-center justify-center px-8 py-3 overflow-hidden font-medium rounded-xl transition-all duration-300";
   
   const variants = {
@@ -9,18 +9,15 @@ const Button = ({ children, variant = "primary", className = "", href, ...props 
     glass: "text-white glass glass-hover"
   };
 
-  const Component = href ? motion.a : motion.button;
-
   return (
-    <Component
-      href={href}
+    <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       className={`${baseStyles} ${variants[variant]} ${className}`}
       {...props}
     >
       <span className="relative z-10 flex items-center gap-2">{children}</span>
-    </Component>
+    </motion.button>
   );
 };
 

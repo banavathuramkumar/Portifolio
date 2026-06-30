@@ -1,15 +1,33 @@
 import { Mail, Heart } from "lucide-react";
 import { GithubIcon, LinkedinIcon, TwitterIcon } from "../ui/Icons";
-import { profile } from "../../data/profile";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const Footer = () => {
+  const [profile, setProfile] = useState(null);
   const currentYear = new Date().getFullYear();
 
-  const socialLinks = [
-    { icon: GithubIcon, href: profile.social.github, label: "GitHub" },
-    { icon: LinkedinIcon, href: profile.social.linkedin, label: "LinkedIn" },
-    { icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
-  ];
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const { data } = await axios.get(`${apiUrl}/api/profile`);
+        setProfile(data);
+      } catch (error) {
+        console.warn("Failed to fetch profile", error);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const socialLinks = profile
+    ? [
+        { icon: GithubIcon, href: profile.social.github, label: "GitHub" },
+        { icon: LinkedinIcon, href: profile.social.linkedin, label: "LinkedIn" },
+        { icon: TwitterIcon, href: profile.social.twitter, label: "Twitter" },
+        { icon: Mail, href: `mailto:${profile.email}`, label: "Email" },
+      ]
+    : [];
 
   return (
     <footer className="border-t border-white/5 bg-dark-900 pt-16 pb-8">
@@ -18,7 +36,7 @@ const Footer = () => {
           
           {/* Brand/Name */}
           <div className="text-center md:text-left">
-            <h3 className="text-xl font-bold text-white mb-2">{profile.name}</h3>
+            <h3 className="text-xl font-bold text-white mb-2">{profile?.name || "..."}</h3>
             <p className="text-slate-400 text-sm">
               Building digital experiences with modern web technologies.
             </p>
@@ -46,7 +64,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="mt-12 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-500">
-          <p>© {currentYear} {profile.name}. All rights reserved.</p>
+          <p>© {currentYear} {profile?.name || "..."}. All rights reserved.</p>
           <p className="flex items-center gap-1">
             Made with <Heart size={14} className="text-red-500" /> using React & Tailwind
           </p>

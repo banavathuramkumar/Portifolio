@@ -1,9 +1,35 @@
 import { motion } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
 import Button from "../ui/Button";
-import { profile } from "../../data/profile";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+const resolveUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http") || path.startsWith("data:")) return path;
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  return `${apiUrl}${path}`;
+};
 
 const Hero = () => {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        const { data } = await axios.get(`${apiUrl}/api/profile`);
+        setProfile(data);
+      } catch (error) {
+        console.warn("Failed to fetch profile", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -20,31 +46,36 @@ const Hero = () => {
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
   };
 
+  if (loading || !profile) {
+    return (
+      <section id="home" className="min-h-screen flex items-center justify-center pt-20 relative animate-pulse">
+        <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
+          Loading profile...
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="home" className="min-h-screen flex items-center justify-center pt-20 relative">
-      <div className="container mx-auto px-6 md:px-12 relative z-10 ">
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
         <motion.div 
           className="max-w-4xl mx-auto text-center"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
-          <motion.div variants={itemVariants} className="mb-6 inline-block">
-            <span className="glass px-4 py-2 rounded-full text-sm font-medium text-primary border-primary/20">
-              👋 Welcome to my portfolio
+          <motion.h1 variants={itemVariants} className="font-extrabold tracking-tight mb-6 leading-tight">
+            <span className="text-3xl md:text-5xl lg:text-6xl text-white block mb-2 leading-tight">
+              Hi, I'm {profile.heroTitle || profile.name}
             </span>
-          </motion.div>
-          
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6">
-    
-            Hi, I'm <span className="text-white ">{profile.name}</span>
-            <br />
-            <span className="text-gradient leading-tight ">{profile.role}</span>
+            <span className="text-gradient text-lg md:text-2xl lg:text-3xl leading-tight block">
+              {profile.heroSubtitle || profile.role}
+            </span>
           </motion.h1>
           
           <motion.p variants={itemVariants} className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            I craft premium digital experiences using the MERN stack. 
-            Focused on building fast, scalable, and visually stunning web applications.
+            {profile.heroDescription || "I craft premium digital experiences using the MERN stack."}
           </motion.p>
           
           <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -54,35 +85,21 @@ const Hero = () => {
             >
               View My Work <ArrowRight size={18} />
             </Button>
-           <Button
-  variant="glass"
-  onClick={() => {
-    const link = document.createElement("a");
-    link.href = "/resume.pdf";
-    link.download = "Ram_Kumar_Resume.pdf";
-    link.click();
-  }}
->
-  Download Resume <Download size={18} />
-</Button>
+            <Button
+              variant="glass"
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = resolveUrl(profile.resumeLink) || "/resume.pdf";
+                link.download = `${profile.name.replace(/\s+/g, "_")}_Resume.pdf`;
+                link.target = "_blank";
+                link.click();
+              }}
+            >
+              Download Resume <Download size={18} />
+            </Button>
           </motion.div>
         </motion.div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div 
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
-      >
-        <span className="text-xs text-slate-500 uppercase tracking-widest">Scroll</span>
-        <motion.div 
-          className="w-[1px] h-12 bg-gradient-to-b from-primary to-transparent"
-          animate={{ height: ["0px", "48px", "0px"], y: [0, 24, 48] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </motion.div>
     </section>
   );
 };

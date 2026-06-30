@@ -32,6 +32,55 @@ const createContact = async (req, res, next) => {
   }
 };
 
+// @desc    Get all contact messages (admin only)
+// @route   GET /admin/contacts
+// @access  Private
+const getContacts = async (req, res, next) => {
+  try {
+    const contacts = await Contact.find({}).sort({ createdAt: -1 });
+    res.json(contacts);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Mark a contact message as read (admin only)
+// @route   PUT /admin/contacts/:id/read
+// @access  Private
+const markContactRead = async (req, res, next) => {
+  try {
+    const contact = await Contact.findById(req.params.id);
+    if (!contact) {
+      res.status(404);
+      throw new Error("Contact message not found");
+    }
+    contact.read = req.body.read !== undefined ? req.body.read : true;
+    await contact.save();
+    res.json(contact);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a contact message (admin only)
+// @route   DELETE /admin/contacts/:id
+// @access  Private
+const deleteContact = async (req, res, next) => {
+  try {
+    const contact = await Contact.findByIdAndDelete(req.params.id);
+    if (!contact) {
+      res.status(404);
+      throw new Error("Contact message not found");
+    }
+    res.json({ message: "Message removed" });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createContact,
+  getContacts,
+  markContactRead,
+  deleteContact,
 };

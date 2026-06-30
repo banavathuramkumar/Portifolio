@@ -23,10 +23,14 @@ import {
 import axios from "axios";
 import Button from "../components/Button";
 
+const getApiUrl = () => {
+  return localStorage.getItem("VITE_API_URL") || import.meta.env.VITE_API_URL || "http://localhost:5000";
+};
+
 const resolveUrl = (path) => {
   if (!path) return "";
   if (path.startsWith("http") || path.startsWith("data:")) return path;
-  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const apiUrl = getApiUrl();
   return `${apiUrl}${path}`;
 };
 
@@ -40,7 +44,7 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     setLoadingStats(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/admin/stats`);
       setStats(data);
     } catch (err) {
@@ -227,13 +231,50 @@ const DashboardTab = ({ stats, loading, refreshStats }) => {
       </div>
 
       <div className="mt-8 glass p-6 rounded-2xl border border-glass-border">
-        <h3 className="text-lg font-bold text-white mb-4">Independent Deployment Info</h3>
+        <h3 className="text-lg font-bold text-white mb-4">API URL Configuration</h3>
         <p className="text-slate-400 text-sm leading-relaxed mb-4">
-          This admin panel runs in isolation. Updates made here will push straight to your MongoDB database and populate immediately on your main client landing page.
+          Specify the live URL of your deployed backend here. If no custom URL is saved, it will fall back to environment variables or localhost.
         </p>
-        <div className="bg-[#12121a] p-4 rounded-xl border border-white/5 text-xs font-mono text-slate-400">
-          <span className="text-primary font-bold">API URL:</span> {import.meta.env.VITE_API_URL || "http://localhost:5000"}
-        </div>
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            const url = e.target.apiUrl.value.trim();
+            if (url) {
+              localStorage.setItem("VITE_API_URL", url);
+              alert("Backend API URL saved! Reloading workspace...");
+              window.location.reload();
+            } else {
+              localStorage.removeItem("VITE_API_URL");
+              alert("API URL reset. Reloading workspace...");
+              window.location.reload();
+            }
+          }} 
+          className="flex flex-col sm:flex-row gap-3 w-full"
+        >
+          <input
+            type="text"
+            name="apiUrl"
+            placeholder="e.g. https://portifolio-backend-rpmb.onrender.com"
+            defaultValue={localStorage.getItem("VITE_API_URL") || import.meta.env.VITE_API_URL || ""}
+            className="flex-grow bg-dark-800 border border-white/10 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-primary text-sm font-mono"
+          />
+          <button type="submit" className="px-6 py-2.5 bg-primary text-dark-900 font-semibold rounded-xl hover:bg-primary-hover transition-colors text-sm cursor-pointer whitespace-nowrap">
+            Save URL
+          </button>
+          {localStorage.getItem("VITE_API_URL") && (
+            <button
+              type="button"
+              onClick={() => {
+                localStorage.removeItem("VITE_API_URL");
+                alert("API URL reset to defaults! Reloading workspace...");
+                window.location.reload();
+              }}
+              className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl transition-all text-sm font-medium cursor-pointer"
+            >
+              Reset
+            </button>
+          )}
+        </form>
       </div>
     </div>
   );
@@ -251,7 +292,7 @@ const ProfileTab = () => {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/api/profile`);
       setProfile(data);
     } catch (err) {
@@ -283,7 +324,7 @@ const ProfileTab = () => {
     setError("");
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.put(`${apiUrl}/admin/profile/${profile._id}`, profile);
       setProfile(data); // update local state with returned paths
       setMessage("Profile and landing page titles saved successfully!");
@@ -702,7 +743,7 @@ const ProjectsTab = ({ triggerStatsRefresh }) => {
   const fetchProjects = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/api/projects`);
       setProjects(data);
     } catch (err) {
@@ -758,7 +799,7 @@ const ProjectsTab = ({ triggerStatsRefresh }) => {
     const payload = { title, description, image, techStack, liveUrl, githubUrl: githubUrlLocal, featured, order };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       if (currentProject) {
         await axios.put(`${apiUrl}/admin/projects/${currentProject._id}`, payload);
       } else {
@@ -776,7 +817,7 @@ const ProjectsTab = ({ triggerStatsRefresh }) => {
   const deleteProject = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/projects/${id}`);
       fetchProjects();
       triggerStatsRefresh();
@@ -947,7 +988,7 @@ const ExperienceTab = ({ triggerStatsRefresh }) => {
   const fetchExperiences = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/api/experience`);
       setExperiences(data);
     } catch (err) {
@@ -988,7 +1029,7 @@ const ExperienceTab = ({ triggerStatsRefresh }) => {
     const payload = { title, company, period, description, type, order };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       if (currentExp) {
         await axios.put(`${apiUrl}/admin/experience/${currentExp._id}`, payload);
       } else {
@@ -1006,7 +1047,7 @@ const ExperienceTab = ({ triggerStatsRefresh }) => {
   const deleteExperience = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/experience/${id}`);
       fetchExperiences();
       triggerStatsRefresh();
@@ -1142,7 +1183,7 @@ const SkillsTab = ({ triggerStatsRefresh }) => {
   const fetchSkills = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/admin/skills`);
       setSkills(data);
     } catch (err) {
@@ -1180,7 +1221,7 @@ const SkillsTab = ({ triggerStatsRefresh }) => {
     const payload = { category, names, level: Number(level), order: Number(order) };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       if (currentSkill) {
         await axios.put(`${apiUrl}/admin/skills/${currentSkill._id}`, payload);
       } else {
@@ -1198,7 +1239,7 @@ const SkillsTab = ({ triggerStatsRefresh }) => {
   const deleteSkill = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/skills/${id}`);
       fetchSkills();
       triggerStatsRefresh();
@@ -1348,7 +1389,7 @@ const CertificatesTab = ({ triggerStatsRefresh }) => {
   const fetchCerts = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/api/certificates`);
       setCerts(data);
     } catch (err) {
@@ -1387,7 +1428,7 @@ const CertificatesTab = ({ triggerStatsRefresh }) => {
     const payload = { title, issuer, date, link, order };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       if (currentCert) {
         await axios.put(`${apiUrl}/admin/certificates/${currentCert._id}`, payload);
       } else {
@@ -1405,7 +1446,7 @@ const CertificatesTab = ({ triggerStatsRefresh }) => {
   const deleteCert = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/certificates/${id}`);
       fetchCerts();
       triggerStatsRefresh();
@@ -1524,7 +1565,7 @@ const AchievementsTab = ({ triggerStatsRefresh }) => {
   const fetchAchievements = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/api/achievements`);
       setAchievements(data);
     } catch (err) {
@@ -1561,7 +1602,7 @@ const AchievementsTab = ({ triggerStatsRefresh }) => {
     const payload = { title, description, date, order };
 
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       if (currentAch) {
         await axios.put(`${apiUrl}/admin/achievements/${currentAch._id}`, payload);
       } else {
@@ -1579,7 +1620,7 @@ const AchievementsTab = ({ triggerStatsRefresh }) => {
   const deleteAchievement = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/achievements/${id}`);
       fetchAchievements();
       triggerStatsRefresh();
@@ -1688,7 +1729,7 @@ const MessagesTab = ({ triggerStatsRefresh }) => {
   const fetchMessages = async () => {
     setLoading(true);
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       const { data } = await axios.get(`${apiUrl}/admin/contacts`);
       setMessages(data);
     } catch (err) {
@@ -1704,7 +1745,7 @@ const MessagesTab = ({ triggerStatsRefresh }) => {
 
   const markAsRead = async (id, readStatus) => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.put(`${apiUrl}/admin/contacts/${id}/read`, { read: readStatus });
       fetchMessages();
     } catch (err) {
@@ -1715,7 +1756,7 @@ const MessagesTab = ({ triggerStatsRefresh }) => {
   const deleteMessage = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000";
+      const apiUrl = getApiUrl();
       await axios.delete(`${apiUrl}/admin/contacts/${id}`);
       fetchMessages();
       triggerStatsRefresh();

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 const SectionHeading = ({ title, subtitle, align = "left" }) => {
   return (
-    <div className={`mb-12 md:mb-20 ${align === "center" ? "text-center flex flex-col items-center" : ""}`}>
+    <div className={`mb-8 md:mb-16 ${align === "center" ? "text-center flex flex-col items-center" : ""}`}>
       <motion.div
         initial={{ opacity: 0, x: align === "center" ? 0 : -30, y: align === "center" ? 30 : 0 }}
         whileInView={{ opacity: 1, x: 0, y: 0 }}

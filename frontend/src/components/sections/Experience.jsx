@@ -35,7 +35,7 @@ const Experience = () => {
 
   if (loading) {
     return (
-      <section id="experience" className="py-24 relative bg-dark-800/50">
+      <section id="experience" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
@@ -45,7 +45,7 @@ const Experience = () => {
 
   if (error) {
     return (
-      <section id="experience" className="py-24 relative bg-dark-800/50">
+      <section id="experience" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center">
           <AlertTriangle className="mx-auto text-yellow-500 mb-4 animate-bounce" size={48} />
           <p className="text-slate-400 text-lg mb-4">{error}</p>
@@ -59,7 +59,7 @@ const Experience = () => {
 
   if (experience.length === 0) {
     return (
-      <section id="experience" className="py-24 relative bg-dark-800/50">
+      <section id="experience" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
           No experience details added yet.
         </div>
@@ -68,7 +68,7 @@ const Experience = () => {
   }
 
   return (
-    <section id="experience" className="py-24 relative bg-dark-800/50">
+    <section id="experience" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile?.experienceTitle || "Experience & Education"} 
@@ -78,7 +78,7 @@ const Experience = () => {
 
         <div className="max-w-4xl mx-auto mt-16 relative">
           {/* Timeline central line */}
-          <div className="absolute left-[28px] md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-dark-800 md:-translate-x-1/2 rounded-full" />
+          <div className="absolute left-[16px] md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-dark-800 md:-translate-x-1/2 rounded-full" />
 
           {experience.map((item, index) => {
             const isEven = index % 2 === 0;
@@ -93,7 +93,7 @@ const Experience = () => {
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.4, delay: 0.2 }}
-                  className="absolute left-[16px] md:left-1/2 top-0 w-7 h-7 rounded-full bg-dark-900 border-4 border-primary md:-translate-x-1/2 z-10"
+                  className="absolute left-[4px] md:left-1/2 top-0 w-7 h-7 rounded-full bg-dark-900 border-4 border-primary md:-translate-x-1/2 z-10"
                 />
 
                 {/* Content Card */}
@@ -102,7 +102,7 @@ const Experience = () => {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.6 }}
-                  className={`ml-16 md:ml-0 md:w-1/2 ${isEven ? 'md:pl-12' : 'md:pr-12'}`}
+                  className={`ml-10 md:ml-0 md:w-1/2 ${isEven ? 'md:pl-12' : 'md:pr-12'}`}
                 >
                   <div className="glass p-6 md:p-8 rounded-2xl relative group hover:border-primary/50 transition-colors">
                     

@@ -15,8 +15,13 @@
 }
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+  }
   body {
-    @apply bg-dark-900 text-slate-200 font-sans antialiased overflow-x-hidden selection:bg-primary/30 selection:text-primary-hover;
+    @apply bg-dark-900 text-slate-200 font-sans antialiased selection:bg-primary/30 selection:text-primary-hover;
   }
 }
 

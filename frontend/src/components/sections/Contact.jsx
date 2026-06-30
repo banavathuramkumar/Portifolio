@@ -56,7 +56,7 @@ const Contact = () => {
 
   if (loadingProfile) {
     return (
-      <section id="contact" className="py-24 relative">
+      <section id="contact" className="py-16 md:py-24 relative overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
           Loading contact information...
         </div>
@@ -71,11 +71,12 @@ const Contact = () => {
   ];
 
   return (
-    <section id="contact" className="py-24 relative">
+    <section id="contact" className="py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile.contactTitle || "Get in Touch"} 
           subtitle={profile.contactSubtitle || "Have a question or want to work together? Leave a message!"}
+          align="center"
         />
 
         <div className="grid lg:grid-cols-12 gap-12 mt-12">
@@ -87,17 +88,17 @@ const Contact = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6 }}
           >
-            <div className="glass p-8 rounded-2xl h-full border-glass-border">
+            <div className="glass p-8 rounded-2xl h-full border-glass-border text-center lg:text-left flex flex-col items-center lg:items-start">
               <h3 className="text-2xl font-bold text-white mb-6">Contact Information</h3>
-              <p className="text-slate-400 mb-8 leading-relaxed">
+              <p className="text-slate-400 mb-8 leading-relaxed text-center lg:text-left">
                 Fill out the form and I will get back to you within 24 hours.
               </p>
 
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 w-full">
                 {contactInfo.map((info, index) => {
                   const Icon = info.icon;
                   return (
-                    <div key={index} className="flex items-start gap-4">
+                    <div key={index} className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
                       <div className="p-3 bg-primary/10 rounded-xl text-primary">
                         <Icon size={20} />
                       </div>

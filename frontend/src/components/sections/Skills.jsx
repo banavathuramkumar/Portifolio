@@ -44,7 +44,7 @@ const Skills = () => {
 
   if (loading) {
     return (
-      <section id="skills" className="py-24 relative bg-dark-800/50">
+      <section id="skills" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
@@ -54,7 +54,7 @@ const Skills = () => {
 
   if (error) {
     return (
-      <section id="skills" className="py-24 relative bg-dark-800/50">
+      <section id="skills" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center">
           <AlertTriangle className="mx-auto text-yellow-500 mb-4 animate-bounce" size={48} />
           <p className="text-slate-400 text-lg mb-4">{error}</p>
@@ -68,7 +68,7 @@ const Skills = () => {
 
   if (skillCategories.length === 0) {
     return (
-      <section id="skills" className="py-24 relative bg-dark-800/50">
+      <section id="skills" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
           No skills registered in the portfolio.
         </div>
@@ -77,12 +77,11 @@ const Skills = () => {
   }
 
   return (
-    <section id="skills" className="py-24 relative bg-dark-800/50">
+    <section id="skills" className="py-16 md:py-24 relative bg-dark-800/50 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile?.skillsTitle || "My Skills"} 
           subtitle={profile?.skillsSubtitle || "The technologies and tools I use to build scalable web applications."}
-          align="center"
         />
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 mt-16">

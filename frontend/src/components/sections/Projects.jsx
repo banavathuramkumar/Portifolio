@@ -42,7 +42,7 @@ const Projects = () => {
   }, []);
 
   return (
-    <section id="projects" className="py-24 relative">
+    <section id="projects" className="py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile?.projectsTitle || "Featured Projects"} 

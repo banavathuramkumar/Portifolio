@@ -39,11 +39,22 @@ const Navbar = () => {
   }, []);
 
   const scrollTo = (href) => {
-    setIsOpen(false);
-    const element = document.querySelector(href);
-    if (element) {
-      const top = element.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: "smooth" });
+    const isMobile = window.innerWidth < 768;
+    if (isMobile) {
+      setIsOpen(false);
+      setTimeout(() => {
+        const element = document.querySelector(href);
+        if (element) {
+          const targetOffset = element.offsetTop - 80;
+          window.scrollTo({ top: targetOffset, behavior: "smooth" });
+        }
+      }, 150);
+    } else {
+      const element = document.querySelector(href);
+      if (element) {
+        const targetOffset = element.offsetTop - 80;
+        window.scrollTo({ top: targetOffset, behavior: "smooth" });
+      }
     }
   };
 

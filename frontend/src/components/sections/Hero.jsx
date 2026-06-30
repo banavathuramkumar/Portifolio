@@ -48,7 +48,7 @@ const Hero = () => {
 
   if (loading || !profile) {
     return (
-      <section id="home" className="min-h-screen flex items-center justify-center pt-20 relative animate-pulse">
+      <section id="home" className="min-h-[85vh] md:min-h-screen flex items-center justify-center pt-28 pb-12 md:py-0 relative animate-pulse overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
           Loading profile...
         </div>
@@ -57,7 +57,7 @@ const Hero = () => {
   }
 
   return (
-    <section id="home" className="min-h-screen flex items-center justify-center pt-20 relative">
+    <section id="home" className="min-h-0 md:min-h-screen flex items-center justify-center pt-24 pb-4 md:py-0 relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <motion.div 
           className="max-w-4xl mx-auto text-center"
@@ -78,15 +78,17 @@ const Hero = () => {
             {profile.heroDescription || "I craft premium digital experiences using the MERN stack."}
           </motion.p>
           
-          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-sm sm:max-w-none mx-auto w-full">
             <Button 
               variant="primary" 
+              className="w-full sm:w-auto"
               onClick={() => document.getElementById('projects').scrollIntoView({ behavior: 'smooth' })}
             >
               View My Work <ArrowRight size={18} />
             </Button>
             <Button
               variant="glass"
+              className="w-full sm:w-auto"
               onClick={() => {
                 const link = document.createElement("a");
                 link.href = resolveUrl(profile.resumeLink) || "/resume.pdf";

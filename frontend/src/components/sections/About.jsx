@@ -33,7 +33,7 @@ const About = () => {
 
   if (loading || !profile) {
     return (
-      <section id="about" className="py-24 relative bg-dark-900 animate-pulse">
+      <section id="about" className="py-16 md:py-24 relative bg-dark-900 animate-pulse overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 text-center text-slate-400">
           Loading profile...
         </div>
@@ -48,7 +48,7 @@ const About = () => {
   ];
 
   return (
-    <section id="about" className="py-24 relative">
+    <section id="about" className="py-16 md:py-24 relative overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile.aboutTitle || "About Me"} 
@@ -99,7 +99,7 @@ const About = () => {
               {profile.bio}
             </p>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {stats.map((stat, index) => {
                 const Icon = stat.icon;
                 return (

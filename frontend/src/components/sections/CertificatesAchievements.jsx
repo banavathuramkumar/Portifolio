@@ -38,7 +38,7 @@ const CertificatesAchievements = () => {
 
   if (loading) {
     return (
-      <section id="certificates" className="py-24 relative bg-dark-900">
+      <section id="certificates" className="py-16 md:py-24 relative bg-dark-900 overflow-hidden">
         <div className="container mx-auto px-6 md:px-12 flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
         </div>
@@ -51,7 +51,7 @@ const CertificatesAchievements = () => {
   }
 
   return (
-    <section id="certificates" className="py-24 relative bg-dark-900 border-t border-white/5">
+    <section id="certificates" className="py-16 md:py-24 relative bg-dark-900 border-t border-white/5 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12">
         <SectionHeading 
           title={profile?.certificatesTitle || "Certificates & Achievements"} 

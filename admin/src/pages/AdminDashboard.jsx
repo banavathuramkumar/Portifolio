@@ -72,7 +72,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-900 text-slate-200 flex flex-col md:flex-row relative">
+    <div className="min-h-screen bg-dark-900 text-slate-200 flex flex-col md:flex-row relative overflow-x-hidden w-full">
       {/* Background accents */}
       <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-accent/10 blur-[120px] rounded-full pointer-events-none" />
@@ -150,7 +150,7 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow p-6 md:p-10 z-10 overflow-y-auto h-auto md:h-screen w-full">
+      <main className="flex-grow p-6 md:p-10 z-10 overflow-y-auto overflow-x-hidden h-auto md:h-screen w-full">
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center justify-between">
             <span>{error}</span>
